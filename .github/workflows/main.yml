@@ -36,4 +36,5 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl config get-contexts
+          kubectl apply -f deployment.yaml --force --record
+
