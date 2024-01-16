@@ -29,10 +29,26 @@ jobs:
           push: true
           tags: novajack/webapk:latest
 
+      - name: Install Oracle Cloud CLI
+        run: |
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash
+
+      - name: Configure Oracle Cloud CLI
+        run: |
+          oci setup config --region ap-mumbai-1 --tenancy ocid1.tenancy.oc1..aaaaaaaauoff3cbgepdtsiwg6o6hqqfuwb7t6zwd3sbuberqgrs2owxsmxgq --user ocid1.user.oc1..aaaaaaaa333nsyqyvgradxe33gyjpglqpu5dcrwmlt34kn4x3pgmscw43haq
+
+      - name: Install kubectl
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -q -y kubectl
+
       - name: Configure kubectl for Oracle Kubernetes Engine
         run: |
           mkdir -p $HOME/.kube
-          cp deployment.yaml $GITHUB_WORKSPACE/
+          cp kubeconfig.yaml $HOME/.kube/config
+          echo "$KUBECONFIG" >> $HOME/.bashrc
+          source $HOME/.bashrc
 
       - name: Run kubectl apply
-        run: kubectl apply -f deployment.yaml
+        run: kubectl apply -f kubernetes/deployment.yaml
+
