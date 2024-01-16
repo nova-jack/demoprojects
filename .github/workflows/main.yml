@@ -33,7 +33,9 @@ jobs:
         uses: azure/setup-kubectl@v1
         with:
           kubeconfig: k8s/kubeconfig.yaml
+          
+      - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f kubernetes/deployment.yaml
+      - name: Run kubectl apply
+      run: kubectl apply -f demoprojects/kubernate/deployment.yaml
