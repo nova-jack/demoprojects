@@ -36,7 +36,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: 
-          kubectl apply -f https://raw.githubusercontent.com/nova-jack/demoprojects/main/kubernetes/deployment.yaml --validate=false
+          kubectl apply -f kubernetes
 
 
 
