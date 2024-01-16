@@ -37,5 +37,13 @@ jobs:
       - name: Checkout Repository
       uses: actions/checkout@v2
 
-      - name: Run kubectl apply
-      run: kubectl apply -f demoprojects/kubernate/deployment.yaml
+      - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Kubernetes CLI
+      uses: azure/kubernetes-cli@v1
+      with:
+        installKubectl: true
+
+    - name: Run kubectl apply
+      run: kubectl apply -f demoprojects/kubernetes/deployment.yaml
