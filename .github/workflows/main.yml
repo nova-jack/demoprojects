@@ -35,9 +35,8 @@ jobs:
           kubeconfig: k8s/kubeconfig.yaml
 
       - name: Deploy to Kubernetes
-        run: |
-          kubectl config get-contexts
-          kubectl config current-context
+        run: 
+          kubectl apply -f https://raw.githubusercontent.com/nova-jack/demoprojects/main/kubernetes/deployment.yaml --validate=false
 
 
 
