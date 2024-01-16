@@ -32,7 +32,7 @@ jobs:
       - name: Configure kubectl for Oracle Kubernetes Engine
         run: |
           mkdir -p $HOME/.kube
-          cp demoprojects/kubernetes/deployment.yaml $HOME/.kube/config
+          cp demoprojects/kubernetes/deployment.yaml $GITHUB_WORKSPACE/
 
       - name: Run kubectl apply
-        run: kubectl apply -f demoprojects/kubernetes/deployment.yaml
+        run: kubectl apply -f $GITHUB_WORKSPACE/kubernetes/deployment.yaml
