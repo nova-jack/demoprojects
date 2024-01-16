@@ -37,4 +37,3 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           kubectl config get-contexts
-          kubectl config current-context
