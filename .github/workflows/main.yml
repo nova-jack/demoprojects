@@ -30,8 +30,8 @@ jobs:
           tags: novajack/webapk:latest
 
       - name: Install Oracle Cloud CLI
-  run: |
-    curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults	
+          run: |
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults	
 
       - name: Configure Oracle Cloud CLI
         run: |
