@@ -1,4 +1,4 @@
-name: Build Docker Container and Deploy to Oracle Kubernetes
+name: Build Docker Container and Deploy to Kubernetes
 
 on:
   push:
@@ -29,26 +29,11 @@ jobs:
           push: true
           tags: novajack/webapk:latest
 
-      - name: Install Oracle Cloud CLI
-          run: |
-          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults	
+      - name: Set up Kubernetes context
+        uses: azure/setup-kubectl@v1
+        with:
+          kubeconfig: k8s/kubeconfig.yaml
 
-      - name: Configure Oracle Cloud CLI
+      - name: Deploy to Kubernetes
         run: |
-          oci setup config --region ap-mumbai-1 --tenancy ocid1.tenancy.oc1..aaaaaaaauoff3cbgepdtsiwg6o6hqqfuwb7t6zwd3sbuberqgrs2owxsmxgq --user ocid1.user.oc1..aaaaaaaa333nsyqyvgradxe33gyjpglqpu5dcrwmlt34kn4x3pgmscw43haq
-
-      - name: Install kubectl
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -q -y kubectl
-
-      - name: Configure kubectl for Oracle Kubernetes Engine
-        run: |
-          mkdir -p $HOME/.kube
-          cp kubeconfig.yaml $HOME/.kube/config
-          echo "$KUBECONFIG" >> $HOME/.bashrc
-          source $HOME/.bashrc
-
-      - name: Run kubectl apply
-        run: kubectl apply -f kubernetes/deployment.yaml
-
+          kubectl apply -f https://raw.githubusercontent.com/nova-jack/demoprojects/main/kubernetes/deployment.yaml
