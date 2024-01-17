@@ -32,8 +32,9 @@ jobs:
 
     - name: Install OCI CLI
       run: |
-        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash
+        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --yes
         echo 'export PATH=$PATH:/root/bin' >> $GITHUB_ENV
+
 
     - name: Configure Kubectl for OKE
       uses: oracle-actions/configure-kubectl-oke@v1.3.2
