@@ -18,11 +18,11 @@ jobs:
       with:
         python-version: 3.12
 
-    - name: Install OCI CLI
-      run: |
-        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
-        mv ~/.oci/cli /root/bin
-        echo 'export PATH=$PATH:/root/bin' >> $GITHUB_ENV
-
+  - name: Install OCI CLI
+        run: |
+          for i in {1..3}; do
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash && break || sleep 15;
+          done
+          
     - name: Verify OCI CLI Installation
       run: oci --version
