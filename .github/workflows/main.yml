@@ -32,8 +32,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f demoprojects/kubernetes/deployment.yaml
-          kubectl apply -f demoprojects/kubernetes/service.yaml
+
 
       - name: Install OCI CLI
         run: |
@@ -42,17 +41,6 @@ jobs:
           done
         shell: bash
 
-
-    env:
-      # Ensure secrets are correctly set up
-      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
-      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
-      OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
-
-    steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
