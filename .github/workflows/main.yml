@@ -24,5 +24,8 @@ jobs:
           curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash && break || sleep 15;
         done
 
+    - name: Add OCI CLI to PATH
+      run: echo "export PATH=$HOME/bin:$PATH" >> $HOME/.bashrc && source $HOME/.bashrc
+
     - name: Verify OCI CLI Installation
       run: oci --version
