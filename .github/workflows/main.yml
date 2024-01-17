@@ -1,4 +1,4 @@
-name: Continuous Deployment to Oracle Kubernetes
+name: Install OCI CLI
 
 on:
   push:
@@ -6,15 +6,8 @@ on:
       - main
 
 jobs:
-  deploy:
+  install-oci-cli:
     runs-on: ubuntu-latest
-
-    env:
-      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
-      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
     steps:
     - name: Checkout code
@@ -23,29 +16,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.x
-
-    - name: Install kubectl
-      run: |
-        sudo apt-get update -q
-        sudo apt-get install -y kubectl
+        python-version: your-python-version
 
     - name: Install OCI CLI
       run: |
-        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults --oci-cli-version=your-oci-cli-version
         mv ~/.oci/cli /root/bin
         echo 'export PATH=$PATH:/root/bin' >> $GITHUB_ENV
 
-
-    - name: Configure Kubectl for OKE
-      uses: oracle-actions/configure-kubectl-oke@v1.3.2
-      with:
-        cluster: ${{ secrets.OKE_CLUSTER_OCID }}
-
-    - name: Deploy to Oracle Kubernetes
-      run: |
-        kubectl apply -f kubernetes/deployment.yaml
-
-    - name: Run Kubectl
-      run: kubectl get nodes -A
-
+    - name: Verify OCI CLI Installation
+      run: oci --version
