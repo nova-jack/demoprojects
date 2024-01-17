@@ -34,6 +34,11 @@ jobs:
         with:
           kubeconfig: k8s/kubeconfig.yaml
 
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f demoprojects/kubernetes/deployment.yaml
+          kubectl apply -f demoprojects/kubernetes/service.yaml
+
   install-kubectl:
     runs-on: ubuntu-latest
 
@@ -51,7 +56,6 @@ jobs:
 
       - name: Configure Kubectl
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
-        id: configure-kubectl-oke
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
 
