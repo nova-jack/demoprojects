@@ -35,8 +35,13 @@ jobs:
           kubectl apply -f demoprojects/kubernetes/deployment.yaml
           kubectl apply -f demoprojects/kubernetes/service.yaml
 
-  install-kubectl:
-    runs-on: ubuntu-latest
+      - name: Install OCI CLI
+        run: |
+          for i in {1..3}; do
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash && break || sleep 15;
+          done
+        shell: bash
+
 
     env:
       # Ensure secrets are correctly set up
