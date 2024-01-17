@@ -48,10 +48,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Debug Secrets
+        run: |
+          echo "OCI_CLI_USER: $OCI_CLI_USER"
+          echo "OCI_CLI_TENANCY: $OCI_CLI_TENANCY"
+          # Add similar lines for other secrets
+        shell: bash
+
       - name: Configure Kubectl
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
 
       - name: Run Kubectl
         run: kubectl get nodes -A
