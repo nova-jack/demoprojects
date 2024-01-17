@@ -32,7 +32,7 @@ jobs:
 
     - name: Install OCI CLI
       run: |
-        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --yes
+        curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults --install-dir=/root/bin
         echo 'export PATH=$PATH:/root/bin' >> $GITHUB_ENV
 
 
