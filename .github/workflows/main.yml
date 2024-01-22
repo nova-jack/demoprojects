@@ -38,6 +38,14 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     steps:
+      - name: Update OCI CLI
+        run: pip install --upgrade oci-cli
+
+      - name: Debug OCI CLI Configuration
+        run: |
+          cat $HOME/.oci/config
+          env | grep OCI_CLI
+
       - name: Configure Kubectl
         uses: oracle-actions/configure-kubectl-oke@v1.0
         with:
@@ -49,5 +57,5 @@ jobs:
           OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
           OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
-      - name: Run a Simple Command
-        run: echo "Hello, GitHub Actions!"
+      - name: Run Python Script
+        run: python main.py
