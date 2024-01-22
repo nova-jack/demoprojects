@@ -26,6 +26,7 @@ jobs:
         id: test-configure-kubectl-oke-action
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+          passphrase: ${{ secrets.YOUR_PRIVATE_KEY_PASSPHRASE }}
 
       - name: Run Kubectl
         run: kubectl get nodes -A
