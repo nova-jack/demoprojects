@@ -1,4 +1,4 @@
-name: Build Docker Container and Deploy to Kubernetes
+name: Build Docker Container and Deploy to OKE
 
 on:
   push:
@@ -7,24 +7,15 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  docker:
     runs-on: ubuntu-latest
-
-    env:
-      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
-      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
-      OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      # Consider removing this step if not using Buildx features
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -34,46 +25,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker container
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
           tags: novajack/webapk:latest
 
-      - name: Install OCI CLI
-        run: |
-          for i in {1..3}; do
-            curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash && break || sleep 15;
-          done
-        shell: bash
-
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Configure Kubectl for OKE
-        uses: oracle-actions/configure-kubectl-oke@v1.3.2
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Kubectl
+        uses: oracle-actions/configure-kubectl-oke@v1.0
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
-        env:
-          OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-          OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-          OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-          OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
-          OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
-          OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
-
-      - name: Create Kubeconfig for Private Endpoint
-        run: |
-          oci ce cluster create-kubeconfig \
-            --cluster-id ${{ secrets.OKE_CLUSTER_OCID }} \
-            --file $HOME/.kube/config \
-            --region ${{ secrets.OCI_CLI_REGION }} \
-            --token-version 2.0.0 \
-            --kube-endpoint PRIVATE_ENDPOINT
-
-      - name: Set KUBECONFIG environment variable
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-
-      - name: Run Kubectl to get nodes
-        run: kubectl get nodes -A
