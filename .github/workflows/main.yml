@@ -14,7 +14,7 @@ jobs:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
       OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
+      OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -50,13 +50,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Debug Secrets
-        run: |
-          echo "OCI_CLI_USER: $OCI_CLI_USER"
-          echo "OCI_CLI_TENANCY: $OCI_CLI_TENANCY"
-          # Add similar lines for other secrets
-        shell: bash
-
       - name: Configure Kubectl for OKE
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
         with:
@@ -65,9 +58,22 @@ jobs:
           OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
           OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
           OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-          OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
+          OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
           OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
           OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
+
+      - name: Create Kubeconfig for Private Endpoint
+        run: |
+          oci ce cluster create-kubeconfig \
+            --cluster-id ${{ secrets.OKE_CLUSTER_OCID }} \
+            --file $HOME/.kube/config \
+            --region ${{ secrets.OCI_CLI_REGION }} \
+            --token-version 2.0.0 \
+            --kube-endpoint PRIVATE_ENDPOINT
+
+      - name: Set KUBECONFIG environment variable
+        run: |
+          export KUBECONFIG=$HOME/.kube/config
 
       - name: Run Kubectl to get nodes
         run: kubectl get nodes -A
