@@ -47,4 +47,7 @@ jobs:
           OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
           OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
           OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
-          OCI_CLI_REGION: ${{ env.OCI_CLI_REGION }}
+          OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
+      - name: Run a Simple Command
+        run: echo "Hello, GitHub Actions!"
