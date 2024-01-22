@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+
 env:
   OCI_CLI_REGION: ap-mumbai-1
 
@@ -41,3 +42,9 @@ jobs:
         uses: oracle-actions/configure-kubectl-oke@v1.0
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+        env:
+          OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+          OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+          OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+          OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
+          OCI_CLI_REGION: ${{ env.OCI_CLI_REGION }}
