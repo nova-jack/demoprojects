@@ -17,6 +17,8 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
     steps:
       - name: Set up QEMU
@@ -55,12 +57,17 @@ jobs:
           # Add similar lines for other secrets
         shell: bash
 
-      - name: Configure Kubectl
+      - name: Configure Kubectl for OKE
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
         env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+          OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+          OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+          OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+          OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
+          OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+          OKE_CLUSTER_OCID: ${{ secrets.OKE_CLUSTER_OCID }}
 
-      - name: Run Kubectl
+      - name: Run Kubectl to get nodes
         run: kubectl get nodes -A
