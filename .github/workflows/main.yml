@@ -1,52 +1,37 @@
-name: Build Docker Container and Deploy to OKE
+name: Install Kubectl for OKE
 
 on:
   push:
     branches:
       - main
-      - master
-
-env:
-  OCI_CLI_REGION: ap-mumbai-1
 
 jobs:
-  build:
+  install-kubectl:
     runs-on: ubuntu-latest
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Generate OCI CLI Key Content
+        id: generate-key
+        run: |
+          # Add your logic here to generate or retrieve the OCI CLI key content
+          # For example, you might create a new key pair using openssl
+          openssl genpkey -algorithm RSA -out private_key.pem
+          openssl rsa -pubout -in private_key.pem -out public_key.pem
+          
+          # Set the key content as an output variable
+          echo "::set-output name=oci_cli_key_content::$(cat private_key.pem)"
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Docker container
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: novajack/webapk:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configure Kubectl for Oracle Container Engine for Kubernetes (OKE)
+      - name: Configure Kubectl
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
+        id: configure-kubectl
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
-          OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-          OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-          OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-          OCI_CLI_PRIVATE_KEY: ${{ secrets.OCI_CLI_PRIVATE_KEY }}
-          OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+          oci-cli-key-content: ${{ steps.generate-key.outputs.oci_cli_key_content }}
 
-      - name: Run a Simple Command
-        run: echo "Hello, GitHub Actions!"
+      - name: Run Kubectl
+        run: kubectl get nodes -A
