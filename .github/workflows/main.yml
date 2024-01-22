@@ -11,30 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     name: Install Kubectl for OKE
     env:
-      OCI_CLI_USER: novajack
-      OCI_CLI_TENANCY: ocid1.tenancy.oc1..aaaaaaaauoff3cbgepdtsiwg6o6hqqfuwb7t6zwd3sbuberqgrs2owxsmxgq
-      OCI_CLI_FINGERPRINT: 83:94:6c:43:0d:5c:79:bc:45:44:41:01:9a:ee:36:87	
-      OCI_CLI_KEY_CONTENT: -----BEGIN PRIVATE KEY-----
-MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAK0iZRtdEj67n4GZ
-sw1c4lxF+pfC5nmHkEnC1L+AijPyes+xjbNn0TgedUEiXGV9mre4aukpkKCCugNb
-zB0GS4+n214CtwC2DwaHd0+wsc5HthkW8o+/5L/5XfoDUmRAXJvlUcz6ujKnZUqk
-v6T2I+EQ3I+Z4Y8SBHa5a66/8XlvAgMBAAECgYAyG6PGjSPEKzopYKn9IpZS3V/+
-/0YEA1OjvXMkb5fQHAwmQz1/IHthchM+hCrYpscaCBJNJB37Doq2gSFsfw9r7IWz
-5euCMI6BWNohgQ5wUGey/OM2fhF6QWuJbgmLXrKSYbV7IU7RChbK6/wX7jm92UNO
-WEpXMaDemsOrwMJOYQJBAORTOyTP9UvzFHH+jRUJTmflsWi6HLn4l3FbhduqtiwR
-6Ov5Z8GGZHMOBBNyhdMtoBPq763dXF7dqh/HET0uf2ECQQDCHqINTe+MrbLVS3y5
-2etwW4m0aa4utBFwj860KB+OjZaKDYLAH6E/fBn4czscbxUrtUQDrjQeDUfKRmFu
-TLrPAkA4OhLnhtrGYE8Zn3EIzCjlxxfATYzDc2d//+Tf6pNAGQz+B4Y4jyrvdnUk
-gOBZ1/OC1Ck/7LJRnk7F0pT5NxkhAkEAqzJk7KLdLw5Jd37ZgvbDgxXXvjqtmRbJ
-gqHxREVWf1wzdZEwzMuYY+rI5KqLaSo2W5PDZhOOdypzM9saNjKJVQJABLUWgyrq
-0EJ11ZeX4a9tyFPrFgqbZ5nwaR3Wo8yFk2WzH2SdclGl9qUqICiadfcw+yMmHAth
-YKUCEzg8wRXGig==
------END PRIVATE KEY-----
-      OCI_CLI_REGION: ap-mumbai-1
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
     steps:
       - name: Configure Kubectl
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
         id: test-configure-kubectl-oke-action
         with:
-          cluster: ocid1.cluster.oc1.ap-mumbai-1.aaaaaaaabfej7r3pbsmu6xl7xv27btf4k2ff2sl7ft5rldykjchdj2arwwcq
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+
+      - name: Run Kubectl
+        run: kubectl get nodes -A
