@@ -26,5 +26,3 @@ jobs:
           echo "tenancy=${{ secrets.OCI_CLI_TENANCY }}" >> ~/.oci/config
           echo "region=${{ secrets.OCI_CLI_REGION }}" >> ~/.oci/config
 
-      - name: Run Kubectl
-        run: kubectl get nodes -A
