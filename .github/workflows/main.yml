@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+env:
+  OCI_CLI_REGION: ap-mumbai-1
 
 jobs:
   docker:
