@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Generate OCI CLI Key Content
         id: generate-key
-        run: |
+        run: >
           # Add your logic here to generate or retrieve the OCI CLI key content
           # For example, you might create a new key pair using openssl
           openssl genpkey -algorithm RSA -out private_key.pem
