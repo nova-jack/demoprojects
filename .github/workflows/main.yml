@@ -33,10 +33,6 @@ jobs:
         with:
           push: true
           tags: novajack/webapk:latest
-          
-        with:
-          push: true
-          tags: novajack/webapk:latest
 
   deploy:
     needs: docker
