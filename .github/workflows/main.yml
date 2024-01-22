@@ -8,6 +8,7 @@ on:
 jobs:
   install-kubectl:
     runs-on: ubuntu-latest
+    name: Install Kubectl for OKE
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
@@ -15,23 +16,15 @@ jobs:
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
     steps:
-      - name: Generate OCI CLI Key Content
-        id: generate-key
-        run: >
-          # Add your logic here to generate or retrieve the OCI CLI key content
-          # For example, you might create a new key pair using openssl
-          openssl genpkey -algorithm RSA -out private_key.pem
-          openssl rsa -pubout -in private_key.pem -out public_key.pem
-          
-          # Set the key content as an output variable
-          echo "::set-output name=oci_cli_key_content::$(cat private_key.pem)"
-
       - name: Configure Kubectl
-        uses: oracle-actions/configure-kubectl-oke@v1.3.2
-        id: configure-kubectl
-        with:
-          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
-          oci-cli-key-content: ${{ steps.generate-key.outputs.oci_cli_key_content }}
+        run: |
+          mkdir -p ~/.oci
+          echo "${{ secrets.OCI_CLI_KEY_CONTENT }}" > ~/.oci/oci_api_key.pem
+          echo "[DEFAULT]" > ~/.oci/config
+          echo "user=${{ secrets.OCI_CLI_USER }}" >> ~/.oci/config
+          echo "fingerprint=${{ secrets.OCI_CLI_FINGERPRINT }}" >> ~/.oci/config
+          echo "tenancy=${{ secrets.OCI_CLI_TENANCY }}" >> ~/.oci/config
+          echo "region=${{ secrets.OCI_CLI_REGION }}" >> ~/.oci/config
 
       - name: Run Kubectl
         run: kubectl get nodes -A
