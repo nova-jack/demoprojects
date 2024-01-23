@@ -55,4 +55,5 @@ jobs:
       # Trigger a rollout (assuming your Deployment is named "your-app")
       - name: Update Deployment in Digital Ocean Kubernetes
         run: |
+          kubectl get nodes -A      
           kubectl rollout restart deployment your-app
