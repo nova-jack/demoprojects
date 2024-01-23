@@ -28,6 +28,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: docker
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
     steps:
       - name: Install doctl
         run: |
@@ -45,7 +48,7 @@ jobs:
         run: |
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
-        working-directory: ${{ github.workspace }}
+
       # Trigger a rollout (assuming your Deployment is named "your-app")
       - name: Update Deployment in Digital Ocean Kubernetes
         run: |
