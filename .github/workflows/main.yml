@@ -19,8 +19,10 @@ jobs:
       OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Configure Kubectl for OKE cluster in home region
         uses: ./
@@ -30,6 +32,7 @@ jobs:
 
       - name: Check that the correct kubectl version is active
         run: |
+          set -e
           which kubectl
           kubectl version --short
 
