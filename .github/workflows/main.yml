@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-action-home-region:
+  install-kubectl:
     runs-on: ubuntu-latest
-    name: Test the action in the tenancy home region
+    name: Install Kubectl for OKE
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
@@ -21,20 +21,8 @@ jobs:
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Configure Kubectl for OKE cluster in home region
-        uses: ./
+      - name: Configure Kubectl
+        uses: oracle-actions/configure-kubectl-oke@v1.3.2
         id: test-configure-kubectl-oke-action
         with:
-          cluster: ${{ secrets.OKE_CLUSTER_ID }}
-
-      - name: Check that the correct kubectl version is active
-        run: |
-          set -e
-          which kubectl
-          kubectl version --short
-
-      - name: Get pods using Kubectl
-        run: kubectl get pods -A
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
