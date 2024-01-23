@@ -39,6 +39,14 @@ jobs:
         run: |
           mkdir -p ~/.kube
           doctl kubernetes cluster kubeconfig save kubecluster
-      - name: Update to Digital Ocean Kubernetes
+
+      # Apply Deployment and Service manifests
+      - name: Apply Deployment and Service
+        run: |
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
+
+      # Trigger a rollout (assuming your Deployment is named "your-app")
+      - name: Update Deployment in Digital Ocean Kubernetes
         run: |
           kubectl rollout restart deployment your-app
